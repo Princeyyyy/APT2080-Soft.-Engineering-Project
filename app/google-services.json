@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "714571765392",
+    "project_id": "smart-security-a3466",
+    "storage_bucket": "smart-security-a3466.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:714571765392:android:47a2e75e0ad979835aea15",
+        "android_client_info": {
+          "package_name": "com.prince.project"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "714571765392-qqgc7041ujo88ij8vld3ffm6f5cnlfai.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.prince.project",
+            "certificate_hash": "50438b83901091e51eb9bbec5e50adeff5b08e7c"
+          }
+        },
+        {
+          "client_id": "714571765392-pctd3ugstk6r0q2iheht2f8k9rpu1b0o.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAW1S1u11k-4GUHBF-WZtbzcCD3u7IjBcg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "714571765392-pctd3ugstk6r0q2iheht2f8k9rpu1b0o.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
