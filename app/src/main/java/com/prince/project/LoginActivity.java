@@ -23,10 +23,7 @@ public class LoginActivity extends AppCompatActivity {
     private EditText logPassword;
     private Button logBtn;
     private TextView gotoRegister;
-
-
     private FirebaseAuth mAuth;
-    private ProgressBar load;
     private ImageView shownhide;
 
     @Override
@@ -40,7 +37,6 @@ public class LoginActivity extends AppCompatActivity {
         gotoRegister = findViewById(R.id.gotoRegister);
 
         mAuth = FirebaseAuth.getInstance();
-        load = findViewById(R.id.login_load);
 
         //Show/Hide Password
         shownhide = findViewById(R.id.logshow);
@@ -64,8 +60,6 @@ public class LoginActivity extends AppCompatActivity {
             startActivity(intent);
         }
 
-        gotoRegister.setOnClickListener(this::onRegistrationClick);
-
         logBtn.setOnClickListener(v -> {
             String emailString = logEmail.getText().toString();
             String passwordString = logPassword.getText().toString();
@@ -77,26 +71,24 @@ public class LoginActivity extends AppCompatActivity {
             if (TextUtils.isEmpty(passwordString)) {
                 logPassword.setError("Password is Required");
             } else {
-                load.setVisibility(View.VISIBLE);
                 logBtn.setEnabled(false);
-                logBtn.setText("Logging in");
+                logBtn.setText("Logging in...");
 
                 mAuth.signInWithEmailAndPassword(emailString, passwordString).addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                         startActivity(intent);
                         finish();
-                        load.setVisibility(View.INVISIBLE);
                     } else {
                         Toast.makeText(LoginActivity.this, task.getException().toString(), Toast.LENGTH_SHORT).show();
-                        load.setVisibility(View.INVISIBLE);
                         logBtn.setText("Log in");
                         logBtn.setEnabled(true);
                     }
                 });
             }
-
         });
+
+        gotoRegister.setOnClickListener(this::onRegistrationClick);
     }
 
     public void onRegistrationClick(View view) {
