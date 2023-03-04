@@ -1,30 +1,77 @@
 package com.prince.project;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.widget.Button;
+import android.view.MenuItem;
 
-import com.google.firebase.auth.FirebaseAuth;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-public class MainActivity extends AppCompatActivity {
-
-    private Button logout;
+public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
+    private boolean viewIsAtHome;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        logout = findViewById(R.id.logout);
+        BottomNavigationView navigation = findViewById(R.id.bottomNavigationView);
+        navigation.setOnNavigationItemSelectedListener(this);
+        navigation.setSelectedItemId(R.id.alarm_page);
 
-        logout.setOnClickListener(view -> {
-            FirebaseAuth.getInstance().signOut();
+        displayView(R.id.alarm_page);
+    }
 
-            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-            startActivity(intent);
-            finish();
-        });
+    public void displayView(int viewId) {
+        Fragment fragment = null;
+
+        switch (viewId) {
+            case R.id.info_page:
+                fragment = new OrganisationFragment();
+                viewIsAtHome = false;
+                break;
+
+            case R.id.alarm_page:
+                fragment = new AlarmFragment();
+                viewIsAtHome = true;
+                break;
+
+            case R.id.settings_page:
+                fragment = new SettingsFragment();
+                viewIsAtHome = false;
+                break;
+
+            case R.id.profile_page:
+                fragment = new ProfileFragment();
+                viewIsAtHome = false;
+                break;
+        }
+
+        if (fragment != null) {
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            ft.replace(R.id.container, fragment);
+            ft.commit();
+        }
+
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        displayView(item.getItemId());
+        return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (!viewIsAtHome) {
+            //if the current view is not the News fragment
+            displayView(R.id.alarm_page); //display the News fragment
+        } else {
+            //If view is in News fragment, exit application
+            moveTaskToBack(true);
+        }
     }
 }
