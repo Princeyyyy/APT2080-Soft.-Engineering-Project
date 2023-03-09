@@ -151,6 +151,7 @@ public class RegistrationActivity extends AppCompatActivity {
             }
         });
 
+        //Individual Registration
         regBtn.setOnClickListener(view -> {
             String fnameString = regFname.getText().toString();
             String lnameString = regLname.getText().toString();
@@ -198,21 +199,22 @@ public class RegistrationActivity extends AppCompatActivity {
 
         });
 
+        //Organization Registration
         orgBtn.setOnClickListener(view -> {
             String nameString = orgName.getText().toString();
             String emailString = orgEmail.getText().toString();
             String passwordString = orgPassword.getText().toString();
 
             if (TextUtils.isEmpty(nameString)) {
-                regLname.setError("Name is Required");
+                orgName.setError("Name is Required");
             }
 
             if (TextUtils.isEmpty(emailString)) {
-                regEmail.setError("Email is Required");
+                orgEmail.setError("Email is Required");
             }
 
             if (TextUtils.isEmpty(passwordString)) {
-                regPassword.setError("Password is Required");
+                orgPassword.setError("Password is Required");
             } else {
                 orgBtn.setEnabled(false);
                 orgBtn.setText("Creating your Account...");
