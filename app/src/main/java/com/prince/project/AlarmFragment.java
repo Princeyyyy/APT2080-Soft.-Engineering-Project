@@ -1,14 +1,39 @@
 package com.prince.project;
 
+import android.app.AlarmManager;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.android.material.timepicker.MaterialTimePicker;
+import com.google.android.material.timepicker.TimeFormat;
+import com.prince.project.databinding.ActivityMainBinding;
+
+import java.util.Calendar;
 
 public class AlarmFragment extends Fragment {
+    private MaterialTimePicker timePicker;
+    private Calendar calendar;
+    private AlarmManager alarmManager;
+    private PendingIntent pendingIntent;
+    private TextView selectTime;
+    private Button setAlarm;
+    private Button cancelAlarm;
 
     public AlarmFragment() {
         // Required empty public constructor
@@ -20,6 +45,84 @@ public class AlarmFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_alarm, container, false);
 
+        selectTime = view.findViewById(R.id.selectTime);
+        setAlarm = view.findViewById(R.id.setAlarm);
+        cancelAlarm = view.findViewById(R.id.cancelAlarm);
+
+        createNotificationChannel();
+
+        //Select Time
+        selectTime.setOnClickListener(view1 -> {
+            timePicker = new MaterialTimePicker.Builder()
+                    .setTimeFormat(TimeFormat.CLOCK_12H)
+                    .setHour(12)
+                    .setMinute(0)
+                    .setTitleText("Select Alarm Time")
+                    .build();
+            timePicker.show(getActivity().getSupportFragmentManager(), "smartsecurity");
+
+            timePicker.addOnPositiveButtonClickListener(view11 -> {
+                if (timePicker.getHour() > 12) {
+                    selectTime.setText(
+                            String.format("%02d", (timePicker.getHour() - 12)) + ":" + String.format("%02d", timePicker.getMinute()) + "PM"
+                    );
+                } else {
+                    selectTime.setText(timePicker.getHour() + ":" + timePicker.getMinute() + "AM");
+                }
+                calendar = Calendar.getInstance();
+                calendar.set(Calendar.HOUR_OF_DAY, timePicker.getHour());
+                calendar.set(Calendar.MINUTE, timePicker.getMinute());
+                calendar.set(Calendar.SECOND, 0);
+                calendar.set(Calendar.MILLISECOND, 0);
+            });
+        });
+        // Set Alarm
+//        setAlarm.setOnClickListener(view12 -> {
+//            alarmManager = (AlarmManager) getContext().getSystemService(Context.ALARM_SERVICE);
+//            Intent intent = new Intent(getContext(), AlarmReceiver.class);
+//            pendingIntent = PendingIntent.getBroadcast(getContext(), 0, intent, PendingIntent.FLAG_IMMUTABLE);
+//            alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
+//                    AlarmManager.INTERVAL_DAY, pendingIntent);
+//
+//            Intent inten = new Intent(getActivity(), AlarmReceiver.class);
+//            PendingIntent alarmIntent = PendingIntent.getBroadcast(getActivity(), 0, intent, 0);
+//
+//            AlarmManager alarmManager = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
+//
+//            // Set the alarm to start at the specified time
+//            Calendar calendar = Calendar.getInstance();
+//            calendar.setTimeInMillis(System.currentTimeMillis());
+//            calendar.set(Calendar.HOUR_OF_DAY, timePicker.getHour());
+//            calendar.set(Calendar.MINUTE, timePicker.getMinute());
+//
+//            // Schedule the alarm
+//            alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), alarmIntent);
+//            Toast.makeText(getContext(), "Alarm Set", Toast.LENGTH_SHORT).show();
+//        });
+
+        //Cancel Alarm
+//        cancelAlarm.setOnClickListener(view13 -> {
+//            Intent intent = new Intent(getContext(), AlarmReceiver.class);
+//            pendingIntent = PendingIntent.getBroadcast(getContext(), 0, intent, PendingIntent.FLAG_IMMUTABLE);
+//            if (alarmManager == null) {
+//                alarmManager = (AlarmManager) getContext().getSystemService(Context.ALARM_SERVICE);
+//            }
+//            alarmManager.cancel(pendingIntent);
+//            Toast.makeText(getContext(), "Alarm Canceled", Toast.LENGTH_SHORT).show();
+//        });
+
         return view;
+    }
+
+    private void createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = "smartsecurity";
+            String desc = "Channel for Alarm Manager";
+            int importance = NotificationManager.IMPORTANCE_HIGH;
+            NotificationChannel channel = new NotificationChannel("smartsecurity", name, importance);
+            channel.setDescription(desc);
+            NotificationManager notificationManager = getContext().getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
     }
 }

@@ -1,5 +1,6 @@
 package com.prince.project;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -8,19 +9,27 @@ import android.text.TextUtils;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.prince.project.models.Organization;
 import com.prince.project.models.User;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class RegistrationActivity extends AppCompatActivity {
 
@@ -42,10 +51,9 @@ public class RegistrationActivity extends AppCompatActivity {
     private Button regBtn;
     private Button orgBtn;
     private ImageView orgshownhide;
-
-
+    private Spinner spinner;
     private FirebaseAuth mAuth;
-    private DatabaseReference users;
+    private DatabaseReference users, reference;
     private RadioGroup radioGroup;
 
 
@@ -53,6 +61,32 @@ public class RegistrationActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registration);
+
+        mAuth = FirebaseAuth.getInstance();
+        reference = FirebaseDatabase.getInstance().getReference("organization-details");
+
+        //Spinner
+        spinner = findViewById(R.id.spinner);
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                List<String> dataList = new ArrayList<>();
+                dataList.add("Choose your Organization");
+                for (DataSnapshot child: snapshot.getChildren()) {
+                    Organization data = child.getValue(Organization.class);
+                    dataList.add(data.getOrg_name());
+                }
+
+                //Set up spinner with retrieved data
+                ArrayAdapter<String> adapter = new ArrayAdapter<String>(RegistrationActivity.this, android.R.layout.simple_spinner_dropdown_item, dataList);
+                spinner.setAdapter(adapter);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
 
         //Organisation
         orgName = findViewById(R.id.orgName);
@@ -72,8 +106,6 @@ public class RegistrationActivity extends AppCompatActivity {
         gotoLogin = findViewById(R.id.gotoLogin);
         textView7 = findViewById(R.id.textView7);
         shownhide = findViewById(R.id.regshow);
-
-        mAuth = FirebaseAuth.getInstance();
 
         radioGroup = findViewById(R.id.radio_group);
 
@@ -98,6 +130,8 @@ public class RegistrationActivity extends AppCompatActivity {
                 textView7.setVisibility(View.VISIBLE);
                 gotoLogin.setVisibility(View.VISIBLE);
                 shownhide.setVisibility(View.VISIBLE);
+                spinner.setVisibility(View.VISIBLE);
+                refreshSpinner();
             } else if (checkedRadioButtonText.equals("Organization")) {
                 // Execute code for Organisation
                 regFname.setVisibility(View.GONE);
@@ -108,6 +142,7 @@ public class RegistrationActivity extends AppCompatActivity {
                 textView7.setVisibility(View.GONE);
                 gotoLogin.setVisibility(View.GONE);
                 shownhide.setVisibility(View.GONE);
+                spinner.setVisibility(View.GONE);
                 //------------------------------------
                 orgName.setVisibility(View.VISIBLE);
                 orgEmail.setVisibility(View.VISIBLE);
@@ -158,8 +193,15 @@ public class RegistrationActivity extends AppCompatActivity {
             String emailString = regEmail.getText().toString();
             String passwordString = regPassword.getText().toString();
 
+            String selectedOrg = spinner.getSelectedItem().toString();
+            if (selectedOrg.equals("Choose your Organization")) {
+                // Display an error message to the user
+                Toast.makeText(RegistrationActivity.this, "Please select an organization", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
             if (TextUtils.isEmpty(fnameString)) {
-                regLname.setError("First Name is Required");
+                regFname.setError("First Name is Required");
             }
 
             if (TextUtils.isEmpty(lnameString)) {
@@ -245,6 +287,31 @@ public class RegistrationActivity extends AppCompatActivity {
         gotoLogin.setOnClickListener(this::onLoginClick);
 
         orggotoLogin.setOnClickListener(this::onLoginClick);
+    }
+
+    private void refreshSpinner() {
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("organization-details");
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                List<String> dataList = new ArrayList<>();
+                dataList.add("Choose your organization");
+
+                for (DataSnapshot child : dataSnapshot.getChildren()) {
+                    Organization data = child.getValue(Organization.class);
+                    dataList.add(data.getOrg_name());
+                }
+
+                // Set up spinner with retrieved data
+                ArrayAdapter<String> adapter = new ArrayAdapter<String>(RegistrationActivity.this, android.R.layout.simple_spinner_dropdown_item, dataList);
+                spinner.setAdapter(adapter);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
     public void onLoginClick(View view) {

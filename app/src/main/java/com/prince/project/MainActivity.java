@@ -12,13 +12,14 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
     private boolean viewIsAtHome;
+    private BottomNavigationView navigation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        BottomNavigationView navigation = findViewById(R.id.bottomNavigationView);
+        navigation = findViewById(R.id.bottomNavigationView);
         navigation.setOnNavigationItemSelectedListener(this);
         navigation.setSelectedItemId(R.id.alarm_page);
 
@@ -67,10 +68,11 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     @Override
     public void onBackPressed() {
         if (!viewIsAtHome) {
-            //if the current view is not the News fragment
-            displayView(R.id.alarm_page); //display the News fragment
+            //if the current view is not the Alarm fragment, display the Alarm fragment
+            displayView(R.id.alarm_page);
+            navigation.setId(R.id.alarm_page);
         } else {
-            //If view is in News fragment, exit application
+            //If view is in Alarm fragment, exit application
             moveTaskToBack(true);
         }
     }
