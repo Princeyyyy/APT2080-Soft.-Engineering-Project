@@ -19,6 +19,7 @@
             android:src="@drawable/organization"/>
 
         <TextView
+            android:id="@+id/orgname"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
@@ -26,6 +27,7 @@
             android:textColor="@color/black"/>
 
         <TextView
+            android:id="@+id/orgemail"
             android:layout_width="wrap_content"
             android:layout_marginTop="10dp"
             android:layout_height="wrap_content"

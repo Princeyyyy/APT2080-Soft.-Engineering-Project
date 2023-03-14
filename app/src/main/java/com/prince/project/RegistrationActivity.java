@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -24,6 +25,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.prince.project.models.Organization;
 import com.prince.project.models.User;
@@ -55,6 +57,7 @@ public class RegistrationActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private DatabaseReference users, reference;
     private RadioGroup radioGroup;
+    private String str;
 
 
     @Override
@@ -67,26 +70,7 @@ public class RegistrationActivity extends AppCompatActivity {
 
         //Spinner
         spinner = findViewById(R.id.spinner);
-        reference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                List<String> dataList = new ArrayList<>();
-                dataList.add("Choose your Organization");
-                for (DataSnapshot child: snapshot.getChildren()) {
-                    Organization data = child.getValue(Organization.class);
-                    dataList.add(data.getOrg_name());
-                }
-
-                //Set up spinner with retrieved data
-                ArrayAdapter<String> adapter = new ArrayAdapter<String>(RegistrationActivity.this, android.R.layout.simple_spinner_dropdown_item, dataList);
-                spinner.setAdapter(adapter);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
+        refreshSpinner();
 
         //Organisation
         orgName = findViewById(R.id.orgName);
@@ -197,7 +181,6 @@ public class RegistrationActivity extends AppCompatActivity {
             if (selectedOrg.equals("Choose your Organization")) {
                 // Display an error message to the user
                 Toast.makeText(RegistrationActivity.this, "Please select an organization", Toast.LENGTH_SHORT).show();
-                return;
             }
 
             if (TextUtils.isEmpty(fnameString)) {
@@ -218,10 +201,28 @@ public class RegistrationActivity extends AppCompatActivity {
                 regBtn.setEnabled(false);
                 regBtn.setText("Creating your Account...");
 
+                DatabaseReference orgRef = FirebaseDatabase.getInstance().getReference("organization-details");
+                Query query = orgRef.orderByChild("org_name").equalTo(selectedOrg);
+                query.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            String orgId = dataSnapshot.getChildren().iterator().next().getKey();
+                            // Do something with the orgId, such as save it to a variable for later use
+                            str = orgId;
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        // Handle database error
+                    }
+                });
+
                 mAuth.createUserWithEmailAndPassword(emailString, passwordString).addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         String id = mAuth.getCurrentUser().getUid();
-                        User user = new User(id, fnameString, lnameString, emailString);
+                        User user = new User(id, str, fnameString, lnameString, emailString);
 
                         users = FirebaseDatabase.getInstance().getReference().child("user-details").child(mAuth.getCurrentUser().getUid());
 
@@ -264,7 +265,7 @@ public class RegistrationActivity extends AppCompatActivity {
                 mAuth.createUserWithEmailAndPassword(emailString, passwordString).addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         String id = mAuth.getCurrentUser().getUid();
-                        Organization organization = new Organization(id,nameString,emailString);
+                        Organization organization = new Organization(id, nameString, emailString);
 
                         users = FirebaseDatabase.getInstance().getReference().child("organization-details").child(mAuth.getCurrentUser().getUid());
 
@@ -295,7 +296,7 @@ public class RegistrationActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 List<String> dataList = new ArrayList<>();
-                dataList.add("Choose your organization");
+                dataList.add("Choose your Organization");
 
                 for (DataSnapshot child : dataSnapshot.getChildren()) {
                     Organization data = child.getValue(Organization.class);

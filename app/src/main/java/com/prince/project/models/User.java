@@ -2,6 +2,7 @@ package com.prince.project.models;
 
 public class User {
     String user_id;
+    String org_id;
     String fname;
     String lname;
     String email;
@@ -9,8 +10,9 @@ public class User {
     public User() {
     }
 
-    public User(String user_id, String fname, String lname, String email) {
+    public User(String user_id, String org_id, String fname, String lname, String email) {
         this.user_id = user_id;
+        this.org_id = org_id;
         this.fname = fname;
         this.lname = lname;
         this.email = email;
@@ -22,6 +24,14 @@ public class User {
 
     public void setUser_id(String user_id) {
         this.user_id = user_id;
+    }
+
+    public String getOrg_id() {
+        return org_id;
+    }
+
+    public void setOrg_id(String org_id) {
+        this.org_id = org_id;
     }
 
     public String getFname() {
