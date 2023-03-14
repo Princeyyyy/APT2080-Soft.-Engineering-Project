@@ -40,11 +40,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                 viewIsAtHome = true;
                 break;
 
-            case R.id.settings_page:
-                fragment = new SettingsFragment();
-                viewIsAtHome = false;
-                break;
-
             case R.id.profile_page:
                 fragment = new ProfileFragment();
                 viewIsAtHome = false;

@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -29,6 +30,7 @@ public class ProfileFragment extends Fragment {
     private FirebaseAuth auth;
     private DatabaseReference reference;
     private TextView name;
+    private ImageView image;
     private TextView email;
 
     @Override
@@ -40,6 +42,7 @@ public class ProfileFragment extends Fragment {
         button = view.findViewById(R.id.logout);
         name = view.findViewById(R.id.name);
         email = view.findViewById(R.id.email);
+        image = view.findViewById(R.id.profileIcon);
         button.setOnClickListener(view1 -> {
             FirebaseAuth.getInstance().signOut();
 
@@ -53,10 +56,16 @@ public class ProfileFragment extends Fragment {
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                User user = snapshot.getValue(User.class);
-                String fullname = user.getFname() + " " + user.getLname();
-                name.setText("Name: " + fullname);
-                email.setText("Email: "+ user.getEmail());
+                if (snapshot.exists()) {
+                    User user = snapshot.getValue(User.class);
+                    String fullname = user.getFname() + " " + user.getLname();
+                    name.setText("Name: " + fullname);
+                    email.setText("Email: " + user.getEmail());
+                } else {
+                    name.setVisibility(View.GONE);
+                    email.setVisibility(View.GONE);
+                    image.setVisibility(View.GONE);
+                }
             }
 
             @Override
