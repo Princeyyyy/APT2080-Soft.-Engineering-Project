@@ -76,40 +76,27 @@ public class AlarmFragment extends Fragment {
                 calendar.set(Calendar.MILLISECOND, 0);
             });
         });
+
         // Set Alarm
-//        setAlarm.setOnClickListener(view12 -> {
-//            alarmManager = (AlarmManager) getContext().getSystemService(Context.ALARM_SERVICE);
-//            Intent intent = new Intent(getContext(), AlarmReceiver.class);
-//            pendingIntent = PendingIntent.getBroadcast(getContext(), 0, intent, PendingIntent.FLAG_IMMUTABLE);
-//            alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
-//                    AlarmManager.INTERVAL_DAY, pendingIntent);
-//
-//            Intent inten = new Intent(getActivity(), AlarmReceiver.class);
-//            PendingIntent alarmIntent = PendingIntent.getBroadcast(getActivity(), 0, intent, 0);
-//
-//            AlarmManager alarmManager = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
-//
-//            // Set the alarm to start at the specified time
-//            Calendar calendar = Calendar.getInstance();
-//            calendar.setTimeInMillis(System.currentTimeMillis());
-//            calendar.set(Calendar.HOUR_OF_DAY, timePicker.getHour());
-//            calendar.set(Calendar.MINUTE, timePicker.getMinute());
-//
-//            // Schedule the alarm
-//            alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), alarmIntent);
-//            Toast.makeText(getContext(), "Alarm Set", Toast.LENGTH_SHORT).show();
-//        });
+        setAlarm.setOnClickListener(view12 -> {
+            long intervalMillis = 2 * 60 * 1000;
+            alarmManager = (AlarmManager) getContext().getSystemService(Context.ALARM_SERVICE);
+            Intent intent = new Intent(getContext(), AlarmReceiver.class);
+            pendingIntent = PendingIntent.getBroadcast(getContext(), 0, intent, PendingIntent.FLAG_IMMUTABLE);
+            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), intervalMillis, pendingIntent);
+            Toast.makeText(getContext(), "Alarm Set", Toast.LENGTH_SHORT).show();
+        });
 
         //Cancel Alarm
-//        cancelAlarm.setOnClickListener(view13 -> {
-//            Intent intent = new Intent(getContext(), AlarmReceiver.class);
-//            pendingIntent = PendingIntent.getBroadcast(getContext(), 0, intent, PendingIntent.FLAG_IMMUTABLE);
-//            if (alarmManager == null) {
-//                alarmManager = (AlarmManager) getContext().getSystemService(Context.ALARM_SERVICE);
-//            }
-//            alarmManager.cancel(pendingIntent);
-//            Toast.makeText(getContext(), "Alarm Canceled", Toast.LENGTH_SHORT).show();
-//        });
+        cancelAlarm.setOnClickListener(view13 -> {
+            Intent intent = new Intent(getContext(), AlarmReceiver.class);
+            pendingIntent = PendingIntent.getBroadcast(getContext(), 0, intent, PendingIntent.FLAG_IMMUTABLE);
+            if (alarmManager == null) {
+                alarmManager = (AlarmManager) getContext().getSystemService(Context.ALARM_SERVICE);
+            }
+            alarmManager.cancel(pendingIntent);
+            Toast.makeText(getContext(), "Alarm Canceled", Toast.LENGTH_SHORT).show();
+        });
 
         return view;
     }
@@ -117,9 +104,9 @@ public class AlarmFragment extends Fragment {
     private void createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             CharSequence name = "smartsecurity";
-            String desc = "Channel for Alarm Manager";
-            int importance = NotificationManager.IMPORTANCE_HIGH;
-            NotificationChannel channel = new NotificationChannel("smartsecurity", name, importance);
+            String desc = "Channel for Smart Security";
+            int imp = NotificationManager.IMPORTANCE_HIGH;
+            NotificationChannel channel = new NotificationChannel("smartsecurity", name, imp);
             channel.setDescription(desc);
             NotificationManager notificationManager = getContext().getSystemService(NotificationManager.class);
             notificationManager.createNotificationChannel(channel);

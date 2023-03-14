@@ -1,9 +1,14 @@
 package com.prince.project;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationManagerCompat;
 
+import android.app.NotificationChannel;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.text.TextUtils;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
@@ -30,6 +35,25 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        // Check if notifications are already enabled
+        if (!NotificationManagerCompat.from(this).areNotificationsEnabled()) {
+            // Notifications are not enabled, show a dialog to ask for permission
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Allow Notifications");
+            builder.setMessage("This app would like to send you notifications. Do you want to allow notifications?");
+
+            builder.setPositiveButton(android.R.string.yes, (dialog, which) -> {
+                // Open system settings to allow notifications
+                Intent intent = new Intent();
+                intent.setAction(Settings.ACTION_APP_NOTIFICATION_SETTINGS);
+                intent.putExtra(Settings.EXTRA_APP_PACKAGE, getPackageName());
+                intent.putExtra(Settings.EXTRA_CHANNEL_ID, NotificationChannel.DEFAULT_CHANNEL_ID);
+                startActivity(intent);
+            });
+            builder.setNegativeButton(android.R.string.no, null);
+            builder.show();
+        }
 
         logEmail = findViewById(R.id.logEmail);
         logPassword = findViewById(R.id.logPassword);
