@@ -6,6 +6,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -13,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
 import androidx.fragment.app.Fragment;
 
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,39 +53,20 @@ public class AlarmFragment extends Fragment {
 
         createNotificationChannel();
 
-        //Select Time
-        selectTime.setOnClickListener(view1 -> {
-            timePicker = new MaterialTimePicker.Builder()
-                    .setTimeFormat(TimeFormat.CLOCK_12H)
-                    .setHour(12)
-                    .setMinute(0)
-                    .setTitleText("Select Alarm Time")
-                    .build();
-            timePicker.show(getActivity().getSupportFragmentManager(), "smartsecurity");
-
-            timePicker.addOnPositiveButtonClickListener(view11 -> {
-                if (timePicker.getHour() > 12) {
-                    selectTime.setText(
-                            String.format("%02d", (timePicker.getHour() - 12)) + ":" + String.format("%02d", timePicker.getMinute()) + "PM"
-                    );
-                } else {
-                    selectTime.setText(timePicker.getHour() + ":" + timePicker.getMinute() + "AM");
-                }
-                calendar = Calendar.getInstance();
-                calendar.set(Calendar.HOUR_OF_DAY, timePicker.getHour());
-                calendar.set(Calendar.MINUTE, timePicker.getMinute());
-                calendar.set(Calendar.SECOND, 0);
-                calendar.set(Calendar.MILLISECOND, 0);
-            });
-        });
-
         // Set Alarm
         setAlarm.setOnClickListener(view12 -> {
-            long intervalMillis = 2 * 60 * 1000;
+            long intervalMillis = 20 * 60 * 1000;
             alarmManager = (AlarmManager) getContext().getSystemService(Context.ALARM_SERVICE);
             Intent intent = new Intent(getContext(), AlarmReceiver.class);
             pendingIntent = PendingIntent.getBroadcast(getContext(), 0, intent, PendingIntent.FLAG_IMMUTABLE);
             alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), intervalMillis, pendingIntent);
+
+            // Store the PendingIntent reference for later use
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putString("pendingIntent", pendingIntent.toString());
+            editor.apply();
+
             Toast.makeText(getContext(), "Alarm Set", Toast.LENGTH_SHORT).show();
         });
 
