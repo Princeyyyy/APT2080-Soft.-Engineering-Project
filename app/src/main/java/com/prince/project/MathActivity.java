@@ -1,6 +1,7 @@
 package com.prince.project;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 
 import android.content.Intent;
 import android.media.Ringtone;
@@ -29,12 +30,14 @@ public class MathActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_math);
 
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+
         TextView tv = findViewById(R.id.question);
         Random rand = new Random();
         first = rand.nextInt((100 - 10) + 1) + 1;
         second = rand.nextInt((100 - 10) + 1) + 1;
         op = rand.nextInt((3 - 1) + 1) + 1;
-        throwAlarm();
+//        throwAlarm();
 
         if (op == 1) {
             tv.setText(first + " + " + second + " = ");

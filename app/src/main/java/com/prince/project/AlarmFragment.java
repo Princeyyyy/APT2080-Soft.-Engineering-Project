@@ -29,11 +29,8 @@ import com.prince.project.databinding.ActivityMainBinding;
 import java.util.Calendar;
 
 public class AlarmFragment extends Fragment {
-    private MaterialTimePicker timePicker;
-    private Calendar calendar;
     private AlarmManager alarmManager;
     private PendingIntent pendingIntent;
-    private TextView selectTime;
     private Button setAlarm;
     private Button cancelAlarm;
 
@@ -47,7 +44,6 @@ public class AlarmFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_alarm, container, false);
 
-        selectTime = view.findViewById(R.id.selectTime);
         setAlarm = view.findViewById(R.id.setAlarm);
         cancelAlarm = view.findViewById(R.id.cancelAlarm);
 
@@ -55,7 +51,7 @@ public class AlarmFragment extends Fragment {
 
         // Set Alarm
         setAlarm.setOnClickListener(view12 -> {
-            long intervalMillis = 20 * 60 * 1000;
+            long intervalMillis = 5 * 60 * 1000;
             alarmManager = (AlarmManager) getContext().getSystemService(Context.ALARM_SERVICE);
             Intent intent = new Intent(getContext(), AlarmReceiver.class);
             pendingIntent = PendingIntent.getBroadcast(getContext(), 0, intent, PendingIntent.FLAG_IMMUTABLE);
@@ -67,7 +63,7 @@ public class AlarmFragment extends Fragment {
             editor.putString("pendingIntent", pendingIntent.toString());
             editor.apply();
 
-            Toast.makeText(getContext(), "Alarm Set", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Shift has started", Toast.LENGTH_SHORT).show();
         });
 
         //Cancel Alarm
@@ -78,7 +74,7 @@ public class AlarmFragment extends Fragment {
                 alarmManager = (AlarmManager) getContext().getSystemService(Context.ALARM_SERVICE);
             }
             alarmManager.cancel(pendingIntent);
-            Toast.makeText(getContext(), "Alarm Canceled", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Shift has been ended", Toast.LENGTH_SHORT).show();
         });
 
         return view;

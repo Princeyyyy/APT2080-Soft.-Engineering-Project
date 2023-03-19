@@ -28,6 +28,9 @@ public class AlarmReceiver extends BroadcastReceiver {
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setContentIntent(pendingIntent);
 
+        // Turn on the screen when notification arrives
+        builder.setFullScreenIntent(pendingIntent, true);
+
         Uri soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         builder.setSound(soundUri);
 
