@@ -11,6 +11,12 @@
         android:gravity="center"
         android:orientation="vertical">
 
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:visibility="gone"
+            android:layout_height="match_parent" />
+
         <ImageView
             android:id="@+id/orgImage"
             android:layout_width="100dp"

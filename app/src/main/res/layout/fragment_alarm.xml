@@ -20,7 +20,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="250dp"
-            android:text="Interval has\nbeen set\nfor 20 minutes"
+            android:text="Interval has\nbeen set\nfor 30 minutes"
             android:textAlignment="center"
             android:textColor="@color/white"
             android:textSize="28sp" />

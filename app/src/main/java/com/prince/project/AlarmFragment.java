@@ -1,5 +1,8 @@
 package com.prince.project;
 
+import static android.content.Context.ALARM_SERVICE;
+import static android.content.Context.MODE_PRIVATE;
+
 import android.app.AlarmManager;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -10,23 +13,21 @@ import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.NotificationCompat;
-import androidx.fragment.app.Fragment;
 
-import android.preference.PreferenceManager;
+import androidx.fragment.app.Fragment;
+import androidx.preference.PreferenceManager;
+
+import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.material.timepicker.MaterialTimePicker;
-import com.google.android.material.timepicker.TimeFormat;
-import com.prince.project.databinding.ActivityMainBinding;
-
-import java.util.Calendar;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.lang.reflect.Field;
 
 public class AlarmFragment extends Fragment {
     private AlarmManager alarmManager;
@@ -51,30 +52,22 @@ public class AlarmFragment extends Fragment {
 
         // Set Alarm
         setAlarm.setOnClickListener(view12 -> {
-            long intervalMillis = 5 * 60 * 1000;
+            long intervalMillis = 30 * 60 * 1000;
             alarmManager = (AlarmManager) getContext().getSystemService(Context.ALARM_SERVICE);
             Intent intent = new Intent(getContext(), AlarmReceiver.class);
             pendingIntent = PendingIntent.getBroadcast(getContext(), 0, intent, PendingIntent.FLAG_IMMUTABLE);
             alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), intervalMillis, pendingIntent);
 
-            // Store the PendingIntent reference for later use
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
-            SharedPreferences.Editor editor = prefs.edit();
-            editor.putString("pendingIntent", pendingIntent.toString());
-            editor.apply();
-
-            Toast.makeText(getContext(), "Shift has started", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Shift has started!", Toast.LENGTH_SHORT).show();
         });
 
         //Cancel Alarm
         cancelAlarm.setOnClickListener(view13 -> {
-            Intent intent = new Intent(getContext(), AlarmReceiver.class);
-            pendingIntent = PendingIntent.getBroadcast(getContext(), 0, intent, PendingIntent.FLAG_IMMUTABLE);
-            if (alarmManager == null) {
-                alarmManager = (AlarmManager) getContext().getSystemService(Context.ALARM_SERVICE);
-            }
-            alarmManager.cancel(pendingIntent);
-            Toast.makeText(getContext(), "Shift has been ended", Toast.LENGTH_SHORT).show();
+            String ns = Context.NOTIFICATION_SERVICE;
+            NotificationManager nMgr = (NotificationManager) getContext().getSystemService(ns);
+            nMgr.cancel(123);
+
+            Toast.makeText(getContext(), "Shift has been ended!", Toast.LENGTH_SHORT).show();
         });
 
         return view;
