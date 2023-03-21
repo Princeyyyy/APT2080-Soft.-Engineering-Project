@@ -80,6 +80,8 @@ public class LoginActivity extends AppCompatActivity {
         if (mAuth.getCurrentUser() != null) {
             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
             startActivity(intent);
+
+            Toast.makeText(this, "Welcome back!", Toast.LENGTH_SHORT).show();
         }
 
         logBtn.setOnClickListener(v -> {
@@ -100,6 +102,8 @@ public class LoginActivity extends AppCompatActivity {
                     if (task.isSuccessful()) {
                         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                         startActivity(intent);
+
+                        Toast.makeText(this, "Welcome back!", Toast.LENGTH_SHORT).show();
                         finish();
                     } else {
                         Toast.makeText(LoginActivity.this, task.getException().toString(), Toast.LENGTH_SHORT).show();

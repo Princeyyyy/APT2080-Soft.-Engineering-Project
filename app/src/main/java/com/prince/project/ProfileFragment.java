@@ -68,11 +68,13 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {
+                    //It is a user
                     User user = snapshot.getValue(User.class);
                     String fullname = user.getFname() + " " + user.getLname();
                     name.setText("Name: " + fullname);
                     email.setText("Email: " + user.getEmail());
                 } else {
+                    //It is an organization
                     name.setVisibility(View.GONE);
                     email.setVisibility(View.GONE);
                     image.setVisibility(View.GONE);

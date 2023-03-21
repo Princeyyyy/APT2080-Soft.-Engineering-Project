@@ -11,6 +11,7 @@ public class RecyclerViewHolder extends RecyclerView.ViewHolder {
 
     public RecyclerViewHolder(@NonNull View itemView) {
         super(itemView);
+        mView = itemView;
     }
 
     public void setUserName(String userName) {

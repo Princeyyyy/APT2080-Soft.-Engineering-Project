@@ -116,7 +116,7 @@ public class MathActivity extends AppCompatActivity {
 
                     Toast.makeText(this, "Nicely done!", Toast.LENGTH_SHORT).show();
 
-                    Activity activity = new Activity(user_id,org_id,name,timeSent);
+                    Activity activity = new Activity(id,user_id,org_id,name,timeSent);
 
                     reference.child(id).setValue(activity).addOnCompleteListener(task -> startActivity(intent));
                 } else {
