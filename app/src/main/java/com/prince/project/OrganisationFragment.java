@@ -88,6 +88,7 @@ public class OrganisationFragment extends Fragment {
                 } else {
                     // It is an organization
                     orgimage.setVisibility(View.GONE);
+                    orgname.setVisibility(View.GONE);
                     orgemail.setVisibility(View.GONE);
                     mRecyclerView.setVisibility(View.VISIBLE);
 
@@ -119,7 +120,9 @@ public class OrganisationFragment extends Fragment {
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 // Handle database error
-                orgname.setText("Error retrieving your employee's activities!");
+                orgimage.setVisibility(View.GONE);
+                orgemail.setVisibility(View.GONE);
+                orgname.setText("Error retrieving the details!");
             }
         });
 

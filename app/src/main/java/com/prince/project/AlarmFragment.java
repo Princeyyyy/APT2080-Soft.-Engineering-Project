@@ -14,6 +14,7 @@ import android.os.Build;
 import android.os.Bundle;
 
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.preference.PreferenceManager;
 
@@ -22,7 +23,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.prince.project.models.User;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -34,6 +44,9 @@ public class AlarmFragment extends Fragment {
     private PendingIntent pendingIntent;
     private Button setAlarm;
     private Button cancelAlarm;
+    private FirebaseAuth auth;
+    private DatabaseReference reference;
+    private TextView textView;
 
     public AlarmFragment() {
         // Required empty public constructor
@@ -47,12 +60,39 @@ public class AlarmFragment extends Fragment {
 
         setAlarm = view.findViewById(R.id.setAlarm);
         cancelAlarm = view.findViewById(R.id.cancelAlarm);
+        textView = view.findViewById(R.id.selectTime);
 
         createNotificationChannel();
 
+        auth = FirebaseAuth.getInstance();
+        reference = FirebaseDatabase.getInstance().getReference("user-details").child(auth.getCurrentUser().getUid());
+
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    //It is a user
+                    textView.setText("Interval has\nbeen set\nfor 20 minutes");
+                } else {
+                    //It is an organization
+                    textView.setText("Check organisation\ntab for details");
+                    setAlarm.setEnabled(false);
+                    cancelAlarm.setEnabled(false);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                // Handle database error
+                textView.setText("Error");
+                setAlarm.setVisibility(View.GONE);
+                cancelAlarm.setVisibility(View.GONE);
+            }
+        });
+
         // Set Alarm
         setAlarm.setOnClickListener(view12 -> {
-            long intervalMillis = 30 * 60 * 1000;
+            long intervalMillis = 20 * 60 * 1000;
             alarmManager = (AlarmManager) getContext().getSystemService(Context.ALARM_SERVICE);
             Intent intent = new Intent(getContext(), AlarmReceiver.class);
             pendingIntent = PendingIntent.getBroadcast(getContext(), 0, intent, PendingIntent.FLAG_IMMUTABLE);

@@ -83,7 +83,10 @@ public class ProfileFragment extends Fragment {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-
+                // Handle database error
+                name.setText("Error retreiving user details!");
+                email.setVisibility(View.GONE);
+                image.setVisibility(View.GONE);
             }
         });
 
